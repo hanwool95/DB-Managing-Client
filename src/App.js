@@ -2,11 +2,11 @@
 
 import React from 'react';
 import './App.css';
-import LineChart from "./views/LineChart"
+import LineChart from "./views/LineChart";
 
-import data_a from "sample1.json"
-import data_b from "sample2.json"
-import data_c from "sample3.json"
+import data_a from "./sample1.json"
+import data_b from "./sample2.json"
+import data_c from "./sample3.json"
 
 
 const firstData = {
