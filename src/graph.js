@@ -2,8 +2,6 @@
 
 import { ResponsiveLine } from '@nivo/line'
 
-import * as d3 from 'd3';
-
 
 export const MyResponsiveLine = ({ data /* see data tab */ }) => (
     <ResponsiveLine
