@@ -15,6 +15,7 @@ const LineChart = ({ data = [], dimensions = {} }) => {
             .scaleTime() // 타입 지정
             .domain(d3.extent(data[0].items, (d) => d.date))  // 날짜 데이터를 받아와서 도메인 설정.
             .range([0, width]); // 크기 지정
+
         const yScale = d3
             .scaleLinear()
             .domain([
