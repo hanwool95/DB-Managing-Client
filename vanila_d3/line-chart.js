@@ -3,17 +3,17 @@
 // line-chart.js
 const width = 500;
 const height = 500;
-const margin = {top: 40, right: 40, bottom: 40, left: 40};
+const margin = {top: 80, right: 40, bottom: 40, left: 40};
 
 
 const start_date = new Date('2009-07-24 00:00:00')
 const last_date = new Date('2012-09-25 00:00:00')
 
-const data_label = ['Latanoprost 0.005% 2.5ml oph', 'Benzbromarone 50mg tab']
+const mdLabel = ['Latanoprost 0.005% 2.5ml oph', 'Benzbromarone 50mg tab']
 
 
 
-const data_list = [
+const mdList = [
     [
   {date: new Date('2009-07-24 00:00:00'), value: 1},
   {date: new Date('2009-07-29 00:00:00'), value: 2},
@@ -36,7 +36,7 @@ const data_list = [
   ],
 ];
 let cur_data = 0
-for (const data of data_list) {
+for (const data of mdList) {
     const x = d3.scaleTime()
   .domain([start_date, last_date])
   .range([margin.left, width - margin.right]);
@@ -60,7 +60,7 @@ const yAxis = g => g
         .attr("text-anchor", "start")
         .attr("font-weight", "bold")
         .attr("font-size", '20px')
-        .text(data_label[cur_data])
+        .text(mdLabel[cur_data])
     });
 
 const line = d3.line()
