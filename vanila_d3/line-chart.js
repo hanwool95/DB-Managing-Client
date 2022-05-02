@@ -127,11 +127,11 @@ let makingLine = (dataList, dataLabel, dataMargin) =>{
         .x(d => x(d.date))
         .y(d => y(d.value));
 
-    var div = d3.select("body").append("div")
+    var div = d3.select("div").append("div")
         .attr("class", "tooltip-box")
         .style("opacity", 0);
 
-    const svg = d3.select('body').append('svg').style('width', width).style('height', height);
+    const svg = d3.select('div').append('svg').style('width', width).style('height', height);
 
     svg.append("path")
         .datum(data)
