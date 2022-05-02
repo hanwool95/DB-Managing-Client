@@ -179,9 +179,27 @@ let makingLine = (dataList, dataLabel, dataMargin, title) =>{
 
 }
 
+let makingBar = (data) => {
+    svgs = d3.selectAll("svg")
+    const x = d3.scaleTime()
+        .domain([start_date, last_date])
+        .range([margin.left, width - margin.right]);
+    svgs
+        .selectAll("rect")
+        .data(data)
+        .enter()
+        .append("rect")
+        .attr("height", height)
+        .attr("width", 5)
+        .attr("x", (d) => x(d.date))
+        .attr("y", 0)
+        .attr("fill", "orange")
+        .attr('opacity', '0.3');
+}
+
 makingLine(lbList, lbLabel, lbMargin, "lab");
 makingLine(mdList, mdLabel, mdMargin, "med");
-
+makingBar(importantList);
 
 
 
