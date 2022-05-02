@@ -1,9 +1,9 @@
 
 
 // line-chart.js
-const width = 500;
+const width = 1000;
 const height = 500;
-const margin = {top: 80, right: 40, bottom: 40, left: 40};
+const margin = {top: 10, right: 40, bottom: 40, left: 40};
 
 const start_date = new Date('2009-01-26 08:56:02')
 const last_date = new Date('2012-09-05 09:40:47')
@@ -12,7 +12,7 @@ const mdLabel = ['Latanoprost 0.005% 2.5ml oph', 'Benzbromarone 50mg tab']
 
 const lbLabel = ['Segmented neutrophil', 'Creatinine', '"Bilirubin, total"', 'HDL-Cholesterol']
 
-const lbMargin = {top: 5}
+const lbMargin = {top: 1}
 
 const mdMargin = {top: 0.5}
 
@@ -93,7 +93,8 @@ const mdList = [
   ],
 ];
 
-let makingLine = (dataList, dataLabel, dataMargin) =>{
+let makingLine = (dataList, dataLabel, dataMargin, title) =>{
+    d3.select("div").append("h1").text(title)
     let cur_number = 0
 
     for (const data of dataList) {
@@ -130,7 +131,6 @@ let makingLine = (dataList, dataLabel, dataMargin) =>{
     var div = d3.select("div").append("div")
         .attr("class", "tooltip-box")
         .style("opacity", 0);
-
     const svg = d3.select('div').append('svg').style('width', width).style('height', height);
 
     svg.append("path")
@@ -179,8 +179,8 @@ let makingLine = (dataList, dataLabel, dataMargin) =>{
 
 }
 
-makingLine(lbList, lbLabel, lbMargin);
-makingLine(mdList, mdLabel, mdMargin);
+makingLine(lbList, lbLabel, lbMargin, "lab");
+makingLine(mdList, mdLabel, mdMargin, "med");
 
 
 
