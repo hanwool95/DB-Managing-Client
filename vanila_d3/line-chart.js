@@ -24,7 +24,9 @@ const importantList = [
     {date: new Date('2010-03-14 00:00:00')},
     {date: new Date('2010-04-26 00:00:00')},
     {date: new Date('2011-03-27 00:00:00')},
+    {date: new Date('2012-08-12 10:32:32')},
     {date: new Date('2012-01-12 10:32:32')},
+    {date: new Date('2012-03-12 10:32:32')},
 ]
 
 const lbList = [
@@ -92,6 +94,17 @@ const mdList = [
   {date: new Date('2012-09-25 00:00:00'), value: 4}
   ],
 ];
+
+let makingcheckBox = (label) => {
+
+    label.forEach((data) => {
+
+        $("#div_chk").append("<span id='span_chk'>"+data+"</span><input type='checkbox' id='id_chk' class='class_chk' name='chk"+data+"' value='"+data+"'>");
+    })
+
+}
+
+
 
 let makingLine = (dataList, dataLabel, dataMargin, title) =>{
     d3.select("div").append("h1").text(title)
@@ -196,6 +209,8 @@ let makingBar = (data) => {
         .attr("fill", "orange")
         .attr('opacity', '0.3');
 }
+
+makingcheckBox(lbLabel)
 
 makingLine(lbList, lbLabel, lbMargin, "lab");
 makingLine(mdList, mdLabel, mdMargin, "med");
