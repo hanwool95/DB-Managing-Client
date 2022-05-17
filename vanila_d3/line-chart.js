@@ -1,6 +1,9 @@
 
 
 // line-chart.js
+
+const chart_div_id = "#chart_div"
+
 const width = 1000;
 const height = 500;
 const margin = {top: 10, right: 40, bottom: 40, left: 40};
@@ -8,9 +11,9 @@ const margin = {top: 10, right: 40, bottom: 40, left: 40};
 const start_date = new Date('2009-01-26 08:56:02')
 const last_date = new Date('2012-09-05 09:40:47')
 
-const mdLabel = ['Latanoprost 0.005% 2.5ml oph', 'Benzbromarone 50mg tab']
+const originMdLabel = ['Latanoprost 0.005% 2.5ml oph', 'Benzbromarone 50mg tab']
 
-const lbLabel = ['Segmented neutrophil', 'Creatinine', '"Bilirubin, total"', 'HDL-Cholesterol']
+const originLbLabel = ['Segmented neutrophil', 'Creatinine', 'Bilirubin, total', 'HDL-Cholesterol'] // Todo Data preprocessing "" 전처리 필요
 
 const lbMargin = {top: 1}
 
@@ -29,7 +32,7 @@ const importantList = [
     {date: new Date('2012-03-12 10:32:32')},
 ]
 
-const lbList = [
+const originLbList = [
     [
         {date: new Date('2009-01-26 08:56:02'), value: 52.7},
         {date: new Date('2009-07-10 10:30:44'), value: 52.4},
@@ -72,7 +75,7 @@ const lbList = [
         ]
 ]
 
-const mdList = [
+const originMdList = [
     [
   {date: new Date('2009-07-24 00:00:00'), value: 1},
   {date: new Date('2009-07-29 00:00:00'), value: 2},
@@ -95,19 +98,57 @@ const mdList = [
   ],
 ];
 
-let makingcheckBox = (label) => {
+let Selected = {
+    mdLabel: [],
+    lbLabel: [],
+    mdList: [],
+    lbList: [],
 
-    label.forEach((data) => {
-
-        $("#div_chk").append("<span id='span_chk'>"+data+"</span><input type='checkbox' id='id_chk' class='class_chk' name='chk"+data+"' value='"+data+"'>");
-    })
+    pushList: function(targetNum, name){
+        console.log(name)
+        if (name === "md"){
+            this.mdLabel.push(originMdLabel[targetNum])
+            this.mdList.push(originMdList[targetNum])
+        }
+        else if(name === "lb"){
+            this.lbLabel.push(originLbLabel[targetNum])
+            this.lbList.push(originLbList[targetNum])
+        }
+        else{
+            console.log("not find name")
+        }
+    }
 
 }
 
 
 
+let makingcheckBox = (label, fieldName) => {
+    // for (i = 0; i < Object.keys(label).length; i++)
+    // {
+    //     $("#div_chk")
+    //         .append("<span id='span_chk'><input type='checkbox' id='id_chk' class='class_chk' name='chk"+label[i]+"' value='"+label[i]+"' onClick='drawLineByCheck(\""+label[i]+"\")'>"+label[i]+"</span>");
+    // }
+    label.forEach((data, index) => {
+        $("#div_chk")
+            .append("<span id='span_chk'><input type='checkbox' id='id_chk' class='class_chk' name='chk"+data+"' value='"+data+"' onClick='drawLineByCheck(\""+index+"\",\""+fieldName+"\")'>"
+            +data+"</span>");
+    })
+    $("#div_chk").append("<br>")
+}
+
+let drawLineByCheck = (labelName, fieldName) => {
+    console.log(labelName)
+    $(chart_div_id).empty();
+    Selected.pushList(labelName, fieldName)
+    makingLine(Selected.lbList, Selected.lbLabel, lbMargin, "lab");
+    makingLine(Selected.mdList, Selected.mdLabel, mdMargin, "med");
+}
+
+
+
 let makingLine = (dataList, dataLabel, dataMargin, title) =>{
-    d3.select("div").append("h1").text(title)
+    d3.select(chart_div_id).append("h1").text(title)
     let cur_number = 0
 
     for (const data of dataList) {
@@ -141,10 +182,10 @@ let makingLine = (dataList, dataLabel, dataMargin, title) =>{
         .x(d => x(d.date))
         .y(d => y(d.value));
 
-    var div = d3.select("div").append("div")
+    var div = d3.select(chart_div_id).append("div")
         .attr("class", "tooltip-box")
         .style("opacity", 0);
-    const svg = d3.select('div').append('svg').style('width', width).style('height', height);
+    const svg = d3.select(chart_div_id).append('svg').style('width', width).style('height', height);
 
     svg.append("path")
         .datum(data)
@@ -210,10 +251,10 @@ let makingBar = (data) => {
         .attr('opacity', '0.3');
 }
 
-makingcheckBox(lbLabel)
-
-makingLine(lbList, lbLabel, lbMargin, "lab");
-makingLine(mdList, mdLabel, mdMargin, "med");
+makingcheckBox(originLbLabel, "lb")
+makingcheckBox(originMdLabel, "md")
+// makingLine(lbList, lbLabel, lbMargin, "lab");
+// makingLine(mdList, mdLabel, mdMargin, "med");
 makingBar(importantList);
 
 
