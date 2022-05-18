@@ -99,20 +99,48 @@ const originMdList = [
 ];
 
 let Selected = {
-    mdLabel: [],
+
     lbLabel: [],
-    mdList: [],
     lbList: [],
+    mdLabel: [],
+    mdList: [],
+
+    initList: function(mdLength, lbLength){
+        this.lbLabel = [null] * lbLength
+        this.lbList = [null] * lbLength
+        this.mdLabel = [null] * mdLength
+        this.mdList = [null] * mdLength
+    },
+
+    printList: function(){
+      console.log(this.lbLabel);
+      console.log(this.mdLabel);
+    },
+
 
     pushList: function(targetNum, name){
-        console.log(name)
-        if (name === "md"){
-            this.mdLabel.push(originMdLabel[targetNum])
-            this.mdList.push(originMdList[targetNum])
+        if (name === "lb"){
+            this.lbLabel[targetNum] = originLbLabel[targetNum]
+            this.lbList[targetNum] = originLbList[targetNum]
+
         }
-        else if(name === "lb"){
-            this.lbLabel.push(originLbLabel[targetNum])
-            this.lbList.push(originLbList[targetNum])
+        else if(name === "md"){
+            this.mdLabel[targetNum] = originMdLabel[targetNum]
+            this.mdList[targetNum] = originMdList[targetNum]
+        }
+        else{
+            console.log("not find name")
+        }
+    },
+
+    popList: function(targetNum, name){
+        if (name === "lb"){
+            this.lbLabel[targetNum] = null
+            this.lbList[targetNum] = null
+        }
+        else if(name === "md"){
+            this.mdLabel[targetNum] = null
+            this.mdList[targetNum] = null
         }
         else{
             console.log("not find name")
@@ -124,34 +152,29 @@ let Selected = {
 
 
 let makingcheckBox = (label, fieldName) => {
-    // for (i = 0; i < Object.keys(label).length; i++)
-    // {
-    //     $("#div_chk")
-    //         .append("<span id='span_chk'><input type='checkbox' id='id_chk' class='class_chk' name='chk"+label[i]+"' value='"+label[i]+"' onClick='drawLineByCheck(\""+label[i]+"\")'>"+label[i]+"</span>");
-    // }
     label.forEach((data, index) => {
         $("#div_chk")
-            .append("<span id='span_chk'><input type='checkbox' id='id_chk' class='class_chk' name='chk"+data+"' value='"+data+"' onClick='drawLineByCheck(\""+index+"\",\""+fieldName+"\")'>"
+            .append("<span id='span_chk'><input type='checkbox' id='id_chk"+fieldName+index+"' class='class_chk' name='chk"+data+"' value='"+data+"' onClick='drawLineByCheck(\""+index+"\",\""+fieldName+"\")'>"
             +data+"</span>");
     })
     $("#div_chk").append("<br>")
 }
 
-let drawLineByCheck = (labelName, fieldName) => {
-    console.log(labelName)
+let drawLineByCheck = (labelNumber, fieldName) => {
     $(chart_div_id).empty();
-    Selected.pushList(labelName, fieldName)
+    current = document.getElementById('id_chk'+fieldName+labelNumber.toString())
+    if (!!current.checked){
+        Selected.pushList(labelNumber, fieldName)
+    }
+    else {
+        Selected.popList(labelNumber, fieldName)
+    }
+    // Selected.printList()
     makingLine(Selected.lbList, Selected.lbLabel, lbMargin, "lab");
     makingLine(Selected.mdList, Selected.mdLabel, mdMargin, "med");
 }
 
-
-
-let makingLine = (dataList, dataLabel, dataMargin, title) =>{
-    d3.select(chart_div_id).append("h1").text(title)
-    let cur_number = 0
-
-    for (const data of dataList) {
+let drawLineGraph = (data, dataLabel, dataMargin, cur_number) => {
     const x = d3.scaleTime()
         .domain([start_date, last_date])
         .range([margin.left, width - margin.right]);
@@ -228,10 +251,22 @@ let makingLine = (dataList, dataLabel, dataMargin, title) =>{
     svg.append('g').call(yAxis);
     svg.node();
 
-    cur_number += 1
-    }
 
 }
+
+
+let makingLine = (dataList, dataLabel, dataMargin, title) => {
+    d3.select(chart_div_id).append("h1").text(title)
+    let cur_number = 0
+    for (const data of dataList) {
+        if (!!data) {
+            drawLineGraph(data, dataLabel, dataMargin, cur_number);
+        }
+        cur_number += 1
+    }
+}
+
+
 
 let makingBar = (data) => {
     svgs = d3.selectAll("svg")
