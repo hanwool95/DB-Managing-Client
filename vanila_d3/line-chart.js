@@ -172,6 +172,7 @@ let drawLineByCheck = (labelNumber, fieldName) => {
     // Selected.printList()
     makingLine(Selected.lbList, Selected.lbLabel, lbMargin, "lab");
     makingLine(Selected.mdList, Selected.mdLabel, mdMargin, "med");
+    makingBar(importantList);
 }
 
 let drawLineGraph = (data, dataLabel, dataMargin, cur_number) => {
@@ -290,7 +291,6 @@ makingcheckBox(originLbLabel, "lb")
 makingcheckBox(originMdLabel, "md")
 // makingLine(lbList, lbLabel, lbMargin, "lab");
 // makingLine(mdList, mdLabel, mdMargin, "med");
-makingBar(importantList);
 
 
 
