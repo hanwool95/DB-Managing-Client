@@ -3,7 +3,7 @@ let MainData
 
 // line-chart.js
 
-let loadingData = path => {
+let loadingMainData = (path) => {
     return fetch(path)
         .then(response => response.json())
         .then(data => MainData = data)
@@ -29,7 +29,7 @@ let originMdLabel = []
 let originLbList = []
 let originMdList = []
 
-let importantList = []
+let event_bars = []
 
 // const start_date = new Date('2009-01-26 08:56:02')
 // const last_date = new Date('2012-09-05 09:40:47')
@@ -117,8 +117,50 @@ let importantList = []
 
 let dateToOnlyDate = (date) =>{
     let dateStringSplited = date.toString().split(" ")
-    return dateStringSplited[0] + " " + dateStringSplited[1] + " " + dateStringSplited[2] + " " +
-        dateStringSplited[3]
+    return dateStringSplited[1] + " " + dateStringSplited[2] + " " + dateStringSplited[3]
+}
+
+let making_event_bars_by_num = () => {
+    let index = 0
+    const events_num = MainData.event_dates
+    console.log(events_num)
+    console.log(events_num.length)
+    console.log(MainData.events)
+
+    for (const [date, values] of Object.entries(MainData.events)) {
+        let cur_date = new Date(date)
+        console.log(index)
+        console.log(cur_date)
+        let prev_date;
+        let next_date;
+        if (index === 0){
+            console.log("first")
+            prev_date = cur_date
+            next_date = new Date(events_num[index+1])
+        }
+        else if (index === events_num.length - 1){
+            console.log("last")
+            prev_date = new Date(events_num[index-1])
+            next_date = last_date
+        }
+        else {
+            console.log("middle")
+            prev_date = new Date(events_num[index-1])
+            next_date = new Date(events_num[index+1])
+        }
+        console.log(prev_date)
+        console.log(next_date)
+
+        let start_date = new Date((prev_date.getTime() + cur_date.getTime()) / 2);
+        let end_date = new Date((cur_date.getTime() + next_date.getTime()) / 2);
+        let middle_date = new Date((start_date.getTime() + end_date.getTime()) / 2);
+
+        event_bars.push({start_date: start_date, end_date: end_date, middle_date: middle_date, dx_date: cur_date,
+            important: values.important})
+
+        index += 1
+    }
+
 }
 
 let Selected = {
@@ -175,7 +217,7 @@ let Selected = {
 let makingAllList = () => {
     makingLine(Selected.lbList, Selected.lbLabel, lbMargin, "lab");
     makingLine(Selected.mdList, Selected.mdLabel, mdMargin, "med");
-    makingBar(importantList);
+    makingBar(event_bars);
 }
 
 
@@ -302,17 +344,71 @@ let makingBar = (data) => {
     const x = d3.scaleTime()
         .domain([start_date, last_date])
         .range([margin.left, width - margin.right]);
+
+    let barWidth = (start_date, end_date) => {
+        return (x(end_date) - x(start_date))
+        // return x(end_date.getTime() - start_date.getTime())
+    }
+
+    let div = d3.select(chart_div_id).append("div")
+        .attr("class", "tooltip-box")
+        .style("opacity", 0);
+
+    console.log(data)
+
     svgs
         .selectAll("rect")
         .data(data)
         .enter()
         .append("rect")
         .attr("height", height)
-        .attr("width", 5)
-        .attr("x", (d) => x(d.date))
+        .attr("width", (d) => barWidth(d.start_date, d.end_date))
+        .attr("x", (d) => x(d.start_date))
         .attr("y", 0)
         .attr("fill", "orange")
-        .attr('opacity', '0.3');
+        .attr('opacity', (d) => {
+            if (d.important){
+                return '0.3'
+            }
+            else {
+                return '0'
+            }
+        })
+        .on('click', function(d) {
+            d.important = !d.important;
+        })
+        .on('mouseover', function (d) {
+            d3.select(this).transition()
+                .attr('opacity', (d) => {
+                    if (d.important){
+                return '0.85'
+            }
+            else {
+                return '0.3'
+            }
+                });
+            div.transition()
+                .duration(50)
+                .style("opacity", 1);
+            div.html(dateToOnlyDate(d.dx_date))
+                .style("left", (d3.event.pageX + 30) + "px")
+                .style("top", (d3.event.pageY - 30) + "px");
+        })
+        .on('mouseout', function (d) {
+            d3.select(this).transition()
+                .attr('opacity', (d) => {
+                    if (d.important){
+                        return '0.3'
+                    }
+                    else {
+                        return '0'
+                    }
+                })
+            div.transition()
+                .duration(50)
+                .style("opacity", 0);
+        });
+
 }
 
 let allCheck = (label, fieldName) =>{
@@ -322,19 +418,19 @@ let allCheck = (label, fieldName) =>{
 }
 
 async function main(){
-    await loadingData('./Case2.json')
-    console.log("load complete")
+    await loadingMainData('./Case2.json')
 
-    console.log(MainData)
-    console.log(MainData.caseNum)
+    console.log("load complete");
 
     event_dates = MainData.event_dates
 
     start_date = new Date(event_dates[0])
     last_date = new Date(event_dates[event_dates.length - 1])
 
+    making_event_bars_by_num();
+
     events = MainData.events
-    console.log(typeof events)
+
     for (const [date, values] of Object.entries(events)) {
         values.lab.forEach((data) => {
             if (data.lab_type === "Number"){
@@ -364,7 +460,7 @@ async function main(){
             }
         })
     })
-    console.log(originLbList)
+    console.log(event_bars)
 
     makingcheckBox(originLbLabel, "lb")
     makingcheckBox(originMdLabel, "md")
