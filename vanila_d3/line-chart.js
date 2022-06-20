@@ -235,7 +235,10 @@ let drawLineGraph = (data, dataLabel, dataMargin, cur_number) => {
             div.transition()
                 .duration(50)
                 .style("opacity", 1);
-            div.html(d.value+"<br><br>"+d.date.toString())
+            let dateStringSplited = d.date.toString().split(" ")
+            let onlyDate = dateStringSplited[0] + " " + dateStringSplited[1] + " " + dateStringSplited[2] + " " +
+                dateStringSplited[3]
+            div.html(d.value+"<br>"+onlyDate)
                 .style("left", (d3.event.pageX + 30) + "px")
                 .style("top", (d3.event.pageY - 30) + "px");
         })
