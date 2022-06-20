@@ -1,6 +1,14 @@
 
+let MainData
 
 // line-chart.js
+
+let loadingData = path => {
+    return fetch(path)
+        .then(response => response.json())
+        .then(data => MainData = data)
+        .catch(error => console.log(error));
+}
 
 const chart_div_id = "#chart_div"
 
@@ -8,95 +16,110 @@ const width = 1000;
 const height = 500;
 const margin = {top: 10, right: 40, bottom: 40, left: 40};
 
-const start_date = new Date('2009-01-26 08:56:02')
-const last_date = new Date('2012-09-05 09:40:47')
-
-const originMdLabel = ['Latanoprost 0.005% 2.5ml oph', 'Benzbromarone 50mg tab']
-
-const originLbLabel = ['Segmented neutrophil', 'Creatinine', 'Bilirubin, total', 'HDL-Cholesterol'] // Todo Data preprocessing "" 전처리 필요
-
 const lbMargin = {top: 1}
 
 const mdMargin = {top: 0.5}
 
-const importantList = [
-    {date: new Date('2009-07-24 00:00:00')},
-    {date: new Date('2009-07-29 00:00:00')},
-    {date: new Date('2009-08-28 00:00:00')},
-    {date: new Date('2010-02-14 00:00:00')},
-    {date: new Date('2010-03-14 00:00:00')},
-    {date: new Date('2010-04-26 00:00:00')},
-    {date: new Date('2011-03-27 00:00:00')},
-    {date: new Date('2012-08-12 10:32:32')},
-    {date: new Date('2012-01-12 10:32:32')},
-    {date: new Date('2012-03-12 10:32:32')},
-]
+let start_date;
+let last_date;
 
-const originLbList = [
-    [
-        {date: new Date('2009-01-26 08:56:02'), value: 52.7},
-        {date: new Date('2009-07-10 10:30:44'), value: 52.4},
-        {date: new Date('2009-11-11 10:17:07'), value: 52.5},
-        {date: new Date('2010-04-28 10:34:34'), value: 53.9},
-        {date: new Date('2010-10-13 10:16:23'), value: 53.9},
-        {date: new Date('2011-07-28 11:04:08'), value: 46.7},
-        {date: new Date('2012-01-12 10:32:32'), value: 58.7},
-        {date: new Date('2012-09-05 09:40:47'), value: 53.1}
-    ],
-    [
-        {date: new Date('2009-01-26 08:56:02'), value: 0.94},
-        {date: new Date('2009-07-10 10:30:44'), value: 1.08},
-        {date: new Date('2009-11-11 10:17:07'), value: 1.00},
-        {date: new Date('2010-04-28 10:34:34'), value: 0.96},
-        {date: new Date('2010-10-13 10:16:23'), value: 1.14},
-        {date: new Date('2011-07-28 11:04:08'), value: 1.05},
-        {date: new Date('2012-01-12 10:32:32'), value: 2.97},
-        {date: new Date('2012-09-05 09:40:47'), value: 1.01}
-        ],
-    [
-        {date: new Date('2009-01-26 08:56:02'), value: 1.0},
-        {date: new Date('2009-07-10 10:30:44'), value: 2.2},
-        {date: new Date('2009-11-11 10:17:07'), value: 1.8},
-        {date: new Date('2010-04-28 10:34:34'), value: 1.6},
-        {date: new Date('2010-10-13 10:16:23'), value: 1.0},
-        {date: new Date('2011-07-28 11:04:08'), value: 1.2},
-        {date: new Date('2012-01-12 10:32:32'), value: 1.7},
-        {date: new Date('2012-09-05 09:40:47'), value: 0.9}
-        ],
-    [
-        {date: new Date('2009-01-26 08:56:02'), value: 33.0},
-        {date: new Date('2009-07-10 10:30:44'), value: 38.0},
-        {date: new Date('2009-11-11 10:17:07'), value: 35.0},
-        {date: new Date('2010-04-28 10:34:34'), value: 34.0},
-        {date: new Date('2010-10-13 10:16:23'), value: 40.0},
-        {date: new Date('2011-07-28 11:04:08'), value: 38.0},
-        {date: new Date('2012-01-12 10:32:32'), value: 54.0},
-        {date: new Date('2012-09-05 09:40:47'), value: 33.0}
-        ]
-]
+let originLbLabel = []
+let originMdLabel = []
 
-const originMdList = [
-    [
-  {date: new Date('2009-07-24 00:00:00'), value: 1},
-  {date: new Date('2009-07-29 00:00:00'), value: 2},
-  {date: new Date('2009-08-28 00:00:00'), value: 3},
-  {date: new Date('2009-12-18 00:00:00'), value: 3},
-  {date: new Date('2010-04-26 00:00:00'), value: 5},
-  {date: new Date('2010-12-08 00:00:00'), value: 2},
-  {date: new Date('2011-04-13 00:00:00'), value: 2},
-  {date: new Date('2011-08-17 00:00:00'), value: 2}
-  ],
-    [
-  {date: new Date('2010-02-14 00:00:00'), value: 2},
-  {date: new Date('2010-03-14 00:00:00'), value: 1},
-  {date: new Date('2010-05-09 00:00:00'), value: 1},
-  {date: new Date('2010-05-27 00:00:00'), value: 1},
-  {date: new Date('2010-08-30 00:00:00'), value: 2},
-  {date: new Date('2010-11-28 00:00:00'), value: 2},
-  {date: new Date('2011-03-27 00:00:00'), value: 3},
-  {date: new Date('2012-09-25 00:00:00'), value: 4}
-  ],
-];
+let originLbList = []
+let originMdList = []
+
+let importantList = []
+
+// const start_date = new Date('2009-01-26 08:56:02')
+// const last_date = new Date('2012-09-05 09:40:47')
+// const originMdLabel = ['Latanoprost 0.005% 2.5ml oph', 'Benzbromarone 50mg tab']
+// const originLbLabel = ['Segmented neutrophil', 'Creatinine', 'Bilirubin, total', 'HDL-Cholesterol']
+//
+// const importantList = [
+//     {date: new Date('2009-07-24 00:00:00')},
+//     {date: new Date('2009-07-29 00:00:00')},
+//     {date: new Date('2009-08-28 00:00:00')},
+//     {date: new Date('2010-02-14 00:00:00')},
+//     {date: new Date('2010-03-14 00:00:00')},
+//     {date: new Date('2010-04-26 00:00:00')},
+//     {date: new Date('2011-03-27 00:00:00')},
+//     {date: new Date('2012-08-12 10:32:32')},
+//     {date: new Date('2012-01-12 10:32:32')},
+//     {date: new Date('2012-03-12 10:32:32')},
+// ]
+//
+// const originLbList = [
+//     [
+//         {date: new Date('2009-01-26 08:56:02'), value: 52.7},
+//         {date: new Date('2009-07-10 10:30:44'), value: 52.4},
+//         {date: new Date('2009-11-11 10:17:07'), value: 52.5},
+//         {date: new Date('2010-04-28 10:34:34'), value: 53.9},
+//         {date: new Date('2010-10-13 10:16:23'), value: 53.9},
+//         {date: new Date('2011-07-28 11:04:08'), value: 46.7},
+//         {date: new Date('2012-01-12 10:32:32'), value: 58.7},
+//         {date: new Date('2012-09-05 09:40:47'), value: 53.1}
+//     ],
+//     [
+//         {date: new Date('2009-01-26 08:56:02'), value: 0.94},
+//         {date: new Date('2009-07-10 10:30:44'), value: 1.08},
+//         {date: new Date('2009-11-11 10:17:07'), value: 1.00},
+//         {date: new Date('2010-04-28 10:34:34'), value: 0.96},
+//         {date: new Date('2010-10-13 10:16:23'), value: 1.14},
+//         {date: new Date('2011-07-28 11:04:08'), value: 1.05},
+//         {date: new Date('2012-01-12 10:32:32'), value: 2.97},
+//         {date: new Date('2012-09-05 09:40:47'), value: 1.01}
+//         ],
+//     [
+//         {date: new Date('2009-01-26 08:56:02'), value: 1.0},
+//         {date: new Date('2009-07-10 10:30:44'), value: 2.2},
+//         {date: new Date('2009-11-11 10:17:07'), value: 1.8},
+//         {date: new Date('2010-04-28 10:34:34'), value: 1.6},
+//         {date: new Date('2010-10-13 10:16:23'), value: 1.0},
+//         {date: new Date('2011-07-28 11:04:08'), value: 1.2},
+//         {date: new Date('2012-01-12 10:32:32'), value: 1.7},
+//         {date: new Date('2012-09-05 09:40:47'), value: 0.9}
+//         ],
+//     [
+//         {date: new Date('2009-01-26 08:56:02'), value: 33.0},
+//         {date: new Date('2009-07-10 10:30:44'), value: 38.0},
+//         {date: new Date('2009-11-11 10:17:07'), value: 35.0},
+//         {date: new Date('2010-04-28 10:34:34'), value: 34.0},
+//         {date: new Date('2010-10-13 10:16:23'), value: 40.0},
+//         {date: new Date('2011-07-28 11:04:08'), value: 38.0},
+//         {date: new Date('2012-01-12 10:32:32'), value: 54.0},
+//         {date: new Date('2012-09-05 09:40:47'), value: 33.0}
+//         ]
+// ]
+//
+// const originMdList = [
+//     [
+//   {date: new Date('2009-07-24 00:00:00'), value: 1},
+//   {date: new Date('2009-07-29 00:00:00'), value: 2},
+//   {date: new Date('2009-08-28 00:00:00'), value: 3},
+//   {date: new Date('2009-12-18 00:00:00'), value: 3},
+//   {date: new Date('2010-04-26 00:00:00'), value: 5},
+//   {date: new Date('2010-12-08 00:00:00'), value: 2},
+//   {date: new Date('2011-04-13 00:00:00'), value: 2},
+//   {date: new Date('2011-08-17 00:00:00'), value: 2}
+//   ],
+//     [
+//   {date: new Date('2010-02-14 00:00:00'), value: 2},
+//   {date: new Date('2010-03-14 00:00:00'), value: 1},
+//   {date: new Date('2010-05-09 00:00:00'), value: 1},
+//   {date: new Date('2010-05-27 00:00:00'), value: 1},
+//   {date: new Date('2010-08-30 00:00:00'), value: 2},
+//   {date: new Date('2010-11-28 00:00:00'), value: 2},
+//   {date: new Date('2011-03-27 00:00:00'), value: 3},
+//   {date: new Date('2012-09-25 00:00:00'), value: 4}
+//   ],
+// ];
+
+let dateToOnlyDate = (date) =>{
+    let dateStringSplited = date.toString().split(" ")
+    return dateStringSplited[0] + " " + dateStringSplited[1] + " " + dateStringSplited[2] + " " +
+        dateStringSplited[3]
+}
 
 let Selected = {
 
@@ -149,12 +172,18 @@ let Selected = {
 
 }
 
+let makingAllList = () => {
+    makingLine(Selected.lbList, Selected.lbLabel, lbMargin, "lab");
+    makingLine(Selected.mdList, Selected.mdLabel, mdMargin, "med");
+    makingBar(importantList);
+}
 
 
 let makingcheckBox = (label, fieldName) => {
     label.forEach((data, index) => {
         $("#div_chk")
-            .append("<span id='span_chk'><input type='checkbox' id='id_chk"+fieldName+index+"' class='class_chk' name='chk"+data+"' value='"+data+"' onClick='drawLineByCheck(\""+index+"\",\""+fieldName+"\")'>"
+            .append("<span id='span_chk'><input type='checkbox' id='id_chk"+fieldName+index+"' " +
+                "class='class_chk' name='chk"+data+"' value='"+data+"' onClick='drawLineByCheck(\""+index+"\",\""+fieldName+"\")' checked=\"chekced\">"
             +data+"</span>");
     })
     $("#div_chk").append("<br>")
@@ -170,9 +199,7 @@ let drawLineByCheck = (labelNumber, fieldName) => {
         Selected.popList(labelNumber, fieldName)
     }
     // Selected.printList()
-    makingLine(Selected.lbList, Selected.lbLabel, lbMargin, "lab");
-    makingLine(Selected.mdList, Selected.mdLabel, mdMargin, "med");
-    makingBar(importantList);
+    makingAllList();
 }
 
 let drawLineGraph = (data, dataLabel, dataMargin, cur_number) => {
@@ -235,9 +262,7 @@ let drawLineGraph = (data, dataLabel, dataMargin, cur_number) => {
             div.transition()
                 .duration(50)
                 .style("opacity", 1);
-            let dateStringSplited = d.date.toString().split(" ")
-            let onlyDate = dateStringSplited[0] + " " + dateStringSplited[1] + " " + dateStringSplited[2] + " " +
-                dateStringSplited[3]
+            let onlyDate = dateToOnlyDate(d.date)
             div.html(d.value+"<br>"+onlyDate)
                 .style("left", (d3.event.pageX + 30) + "px")
                 .style("top", (d3.event.pageY - 30) + "px");
@@ -290,8 +315,81 @@ let makingBar = (data) => {
         .attr('opacity', '0.3');
 }
 
-makingcheckBox(originLbLabel, "lb")
-makingcheckBox(originMdLabel, "md")
+let allCheck = (label, fieldName) =>{
+    label.forEach((data, index) => {
+     Selected.pushList(index, fieldName)
+    })
+}
+
+async function main(){
+    await loadingData('./Case2.json')
+    console.log("load complete")
+
+    console.log(MainData)
+    console.log(MainData.caseNum)
+
+    event_dates = MainData.event_dates
+
+    start_date = new Date(event_dates[0])
+    last_date = new Date(event_dates[event_dates.length - 1])
+
+    events = MainData.events
+    console.log(typeof events)
+    for (const [date, values] of Object.entries(events)) {
+        values.lab.forEach((data) => {
+            if (data.lab_type === "Number"){
+                let lab_name = data.lab_name
+                let lab_num = data.lab_num
+
+                if (originLbLabel.includes(lab_name)) {
+                    lab_index = originLbLabel.findIndex((e) => e === lab_name);
+                    originLbList[lab_index].push({date: new Date(date), value: lab_num})
+                }
+                else {
+                    originLbLabel.push(lab_name)
+                    originLbList.push([{date: new Date(date), value: lab_num}])
+                }
+
+            }
+        })
+    }
+
+    originLbList.forEach((data) => {
+        data.sort(function (a, b) {
+            if (a.date > b.date) {
+                return -1;
+            }
+            else{
+                return 1;
+            }
+        })
+    })
+    console.log(originLbList)
+
+    makingcheckBox(originLbLabel, "lb")
+    makingcheckBox(originMdLabel, "md")
+    allCheck(originLbLabel, "lb")
+    allCheck(originMdLabel, "md")
+    makingAllList();
+}
+
+// const originLbLabel = ['Segmented neutrophil', 'Creatinine', 'Bilirubin, total', 'HDL-Cholesterol']
+
+// const originLbList = [
+//     [
+//         {date: new Date('2009-01-26 08:56:02'), value: 52.7},
+//         {date: new Date('2009-07-10 10:30:44'), value: 52.4},
+//         {date: new Date('2009-11-11 10:17:07'), value: 52.5},
+//         {date: new Date('2010-04-28 10:34:34'), value: 53.9},
+//         {date: new Date('2010-10-13 10:16:23'), value: 53.9},
+//         {date: new Date('2011-07-28 11:04:08'), value: 46.7},
+//         {date: new Date('2012-01-12 10:32:32'), value: 58.7},
+//         {date: new Date('2012-09-05 09:40:47'), value: 53.1}
+//     ],
+
+main();
+
+
 // makingLine(lbList, lbLabel, lbMargin, "lab");
 // makingLine(mdList, mdLabel, mdMargin, "med");
 
