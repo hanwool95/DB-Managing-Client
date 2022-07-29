@@ -81,8 +81,7 @@ let making_event_bars_by_num = () => {
       start_date: start_date,
       end_date: end_date,
       middle_date: middle_date,
-      dx_date: cur_date,
-      important: values.important,
+      dx_date: cur_date
     });
 
     index += 1;
@@ -367,24 +366,24 @@ let makingBar = (data) => {
     .attr("x", (d) => x(d.start_date))
     .attr("y", 0)
     .attr("fill", "skyblue")
-    .attr("opacity", (d) => {
-      if (d.important) {
+    .attr("opacity", (d, i) => {
+      if (Object.values(MainData.events)[i].important) {
         return "0.3";
       } else {
         return "0";
       }
     })
-    .on("click", function (d) {
-      console.log(d.important);
-      d.important = !d.important;
+    .on("click", function (d, i) {
+      console.log(MainData.events)
+      Object.values(MainData.events)[i].important = !Object.values(MainData.events)[i].important;
       svgs.selectAll("rect").dispatch("mouseout");
+      renderImportantEvents()
     })
     .on("mouseover", function (d) {
-      //   console.log(d);
       d3.select(this)
         .transition()
-        .attr("opacity", (d) => {
-          if (d.important) {
+        .attr("opacity", (d, i) => {
+          if (Object.values(MainData.events)[i].important) {
             return "0.85";
           } else {
             return "0.3";
@@ -396,11 +395,11 @@ let makingBar = (data) => {
         .style("left", d3.event.pageX + 30 + "px")
         .style("top", d3.event.pageY - 30 + "px");
     })
-    .on("mouseout", function (d) {
+    .on("mouseout", function (d, i) {
       d3.select(this)
         .transition()
         .attr("opacity", (d) => {
-          if (d.important) {
+          if (Object.values(MainData.events)[i].important) {
             return "0.3";
           } else {
             return "0";
